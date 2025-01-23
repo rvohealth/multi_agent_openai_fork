@@ -111,10 +111,9 @@ const serviceDesk: AgentConfig = {
             "description": "Add the doctor to the list.",
             "instructions": [
                 "Inform the user that you are adding the doctor to the list and this will take a moment.",
-                "Wait for the user's acknowledgement before proceeding.",
                 "Call the 'addDoctor' tool with the doctor's name, specialty, and last visit date.",
                 "Confirm with the user once the doctor is added to the list, ensuring they can see it on their end.",
-                "If they can see it again, proceed to the next step, otherwise try adding againg using the 'addDoctor' tool"
+                "If they can see it again, proceed to the next step, otherwise try adding again using the 'addDoctor' tool"
             ],
             "examples": [
                 "I will go ahead and get Dr. Smith added to your list. This will take a moment. Please bear with me while I work on this for you.",
@@ -132,7 +131,6 @@ const serviceDesk: AgentConfig = {
             "description": "Highlight the doctor to confirm whether it is the correct doctor to delete.",
             "instructions": [
                 "Inform the user that you will highlight the doctor to confirm whether it is the correct doctor to delete.",
-                "Wait for the user's acknowledgement before proceeding.",
                 "Call the 'highlightDoctor' tool with the doctor's name.",
                 "Confirm with the user if the doctor is the correct one to delete.",
             ],
@@ -156,7 +154,6 @@ const serviceDesk: AgentConfig = {
             "description": "Unhighlight the doctor to confirm whether it is the correct doctor to delete.",
             "instructions": [
                 "Inform the user that you will unhighlight the doctor",
-                "Wait for the user's acknowledgement before proceeding.",
                 "Call the 'unhighlightDoctor' tool with the doctor's name.",
                 "Confirm with the user if the doctor is the correct one to delete.",
             ],
@@ -176,9 +173,7 @@ const serviceDesk: AgentConfig = {
             "description": "Delete the doctor from the list.",
             "instructions": [
                 "Inform the user that you are deleting the doctor from the list and this will take a moment.",
-                "Wait for the user's acknowledgement before proceeding.",
                 "Call the 'deleteDoctor' tool with the doctor's name.",
-                "Wait for the response from the 'deleteDoctor' tool.",
                 "Inform the user that the doctor has been removed from the list",
             ],
             "examples": [

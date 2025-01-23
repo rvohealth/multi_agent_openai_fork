@@ -73,6 +73,7 @@ function App() {
     selectedAgentConfigSet,
     sendClientEvent,
     setSelectedAgentName,
+    audioElementRef,
   });
 
   useEffect(() => {

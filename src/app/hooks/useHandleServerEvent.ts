@@ -12,6 +12,7 @@ export interface UseHandleServerEventParams {
   sendClientEvent: (eventObj: any, eventNameSuffix?: string) => void;
   setSelectedAgentName: (name: string) => void;
   shouldForceResponse?: boolean;
+  audioElementRef: React.RefObject<HTMLAudioElement | null>;
 }
 
 export function useHandleServerEvent({
@@ -20,6 +21,7 @@ export function useHandleServerEvent({
   selectedAgentConfigSet,
   sendClientEvent,
   setSelectedAgentName,
+  audioElementRef,
 }: UseHandleServerEventParams) {
   const {
     transcriptItems,
@@ -31,11 +33,78 @@ export function useHandleServerEvent({
 
   const { logServerEvent } = useEvent();
 
+  const waitForAudioCompletion = async () => {
+    if (audioElementRef?.current) {
+      await new Promise<void>((resolve) => {
+        const audio = audioElementRef.current!;
+        const mediaStream = audio.srcObject as MediaStream;
+        const audioTrack = mediaStream?.getAudioTracks()[0];
+        
+        console.log('Audio state:', {
+          hasStream: !!mediaStream,
+          isStreamActive: mediaStream?.active,
+          trackState: audioTrack ? {
+            enabled: audioTrack.enabled,
+            muted: audioTrack.muted,
+            readyState: audioTrack.readyState,
+            label: audioTrack.label
+          } : null
+        });
+        
+        if (audioTrack && 
+            audioTrack.readyState === 'live' && 
+            audioTrack.enabled && 
+            !audioTrack.muted && 
+            !audio.paused) {
+          console.log('Audio is actively playing, waiting for silence...');
+          
+          const audioContext = new AudioContext();
+          const source = audioContext.createMediaStreamSource(mediaStream);
+          const analyzer = audioContext.createAnalyser();
+          source.connect(analyzer);
+          
+          let silenceStartTime = 0;
+          const SILENCE_THRESHOLD = 1; // Adjust this value based on testing
+          const SILENCE_DURATION = 500; // Wait for 500ms of silence
+          
+          const checkAudioActivity = () => {
+            const dataArray = new Uint8Array(analyzer.frequencyBinCount);
+            analyzer.getByteFrequencyData(dataArray);
+            const sum = dataArray.reduce((a, b) => a + b, 0);
+            
+            if (sum <= SILENCE_THRESHOLD) {
+              if (silenceStartTime === 0) {
+                silenceStartTime = performance.now();
+              } else if (performance.now() - silenceStartTime >= SILENCE_DURATION) {
+                console.log('Silence detected for sufficient duration');
+                resolve();
+                return;
+              }
+            } else {
+              silenceStartTime = 0;
+            }
+            
+            requestAnimationFrame(checkAudioActivity);
+          };
+          
+          
+          checkAudioActivity();
+          
+        } else {
+          console.log('No active audio detected, resolving immediately');
+          resolve();
+        }
+      });
+    }
+  };
+
   const handleFunctionCall = async (functionCallParams: {
     name: string;
     call_id?: string;
     arguments: string;
   }) => {
+    await waitForAudioCompletion();
+
     const args = JSON.parse(functionCallParams.arguments);
     const currentAgent = selectedAgentConfigSet?.find(
       (a) => a.name === selectedAgentName
