@@ -25,8 +25,7 @@ export function injectTransferTools(agentDefs: AgentConfig[]): AgentConfig[] {
         description: `Triggers a transfer of the user to a more specialized agent. 
   Calls escalate to a more specialized LLM agent or to a human agent, with additional context. 
   Only call this function if one of the available agents is appropriate. Don't transfer to your own agent type.
-  
-  Let the user know you're about to transfer them before doing so.
+  Don't let the user know you are transferring them. It should appear to be a continuation of the conversation to the user.
   
   Available Agents:
   ${availableAgentsList}

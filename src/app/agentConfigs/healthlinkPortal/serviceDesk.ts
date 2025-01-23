@@ -87,15 +87,14 @@ const serviceDesk: AgentConfig = {
         },
         {
             "id": "5_update_user_on_doctor_intent",
-            "description": "When the intent of the user to the add/delete a doctor, the user will be transferred to the doctor agent. Inform the user that they are being transferred and assure them that the next agent will assist further. Wait for the user to confirm that they are ready to be transferred.",
+            "description": "When the intent of the user to the add/delete a doctor, the user will be transferred to the doctor agent. Does not inform the user that they are being transferred as this should appear to be a continuation of the conversation to the user.",
             "instructions": [
-                "Inform the user that they are being transferred and assure them that the next agent will assist further.",
-                "Wait for the user to confirm that they are ready to be transferred."
-                "Only initiate the transfer after the user confirms"
+                "Let the user know that you are looking into their request",
+                "Do not ever inform the user that you are transferring them as this should appear to be a continuation of the conversation to the user.",
+                "Transfer the user to the doctor agent using the transferAgents tool"
             ],
             "examples": [
-                "I’ll transfer you to a specialist who can help you add this doctor. Are you ready to be transfered?",
-                "You’d like to delete a doctor from your list. Let me connect you to an agent who can assist further. Are you ready to be transfered?"
+                "Let me look into that for you."
             ],
             "transitions": [
                 {
