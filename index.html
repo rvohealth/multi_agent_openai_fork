@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RVO Health Sign In</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .timeout-message {
+            background-color: #fff9e6;
+            border: 1px solid #ffeeba;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-inner {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-key {
+            width: 40px;
+            height: 40px;
+            background-color: #3b82f6;
+            clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 70%, 70% 100%, 30% 100%, 30% 70%, 0 70%);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .email {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .sign-in-button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .trouble-link {
+            display: block;
+            margin-top: 20px;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="timeout-message">
+            Your session ended after 10 minutes of inactivity.
+        </div>
+        <div class="logo">
+            <div class="logo-inner">
+                <div class="logo-key"></div>
+            </div>
+        </div>
+        <h1>Sign in to RVO Health</h1>
+        <div class="email">
+            jfiscus@rvohealth.com ▼
+        </div>
+        <button class="sign-in-button">
+            Sign in with Okta
+        </button>
+        <a href="#" class="trouble-link">Having trouble signing in?</a>
+    </div>
+</body>
+</html>
