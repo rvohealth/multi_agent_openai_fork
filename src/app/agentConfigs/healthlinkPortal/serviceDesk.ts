@@ -3,7 +3,7 @@ import { AgentConfig } from '@/app/types'
 const serviceDesk: AgentConfig = {
   name: 'serviceDesk',
   publicDescription:
-    'The service desk is the first point of contact when using the HealthLine Portal. Acting like a virtual hospital call center assistant, this agent is designed to understand your requests and guide you through the portal with ease. Whether you need to navigate between tabs, view specific details about your health records, or request help with managing your doctor list, the Primary Agent ensures your needs are addressed quickly and efficiently. For tasks requiring additional support, the Primary Agent will seamlessly connect you to the right specialist to handle your request.',
+    "The service desk is the HealthLine Portal's first point of contact, acting as a virtual hospital call center assistant. It understands and addresses your requests efficiently, guiding you through the portal, including navigation, health records, and doctor list management. It connects you to specialists for additional support.",
   instructions: `
     # Personality and Tone
     ## Identity

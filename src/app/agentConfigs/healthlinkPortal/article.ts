@@ -1,10 +1,9 @@
 import { AgentConfig } from '@/app/types'
-// import { RaasClient, RelevanceResponseType } from '@rvohealth/raas-client'
 
 const serviceDesk: AgentConfig = {
   name: 'article',
   publicDescription:
-    'The articles agent helps you find health-related articles in the HealthLine Portal. It can search through our library of articles to find the information you need.',
+    'Finds health-related articles in the HealthLine Portal library.',
   instructions: `
     # Personality and Tone
     ## Identity
@@ -151,35 +150,29 @@ const serviceDesk: AgentConfig = {
   toolLogic: {
     search_articles: async ({ searchQuery }) => {
       console.log(`[toolLogic] searching articles for "${searchQuery}"`)
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Searching articles for "${searchQuery}"`,
-          },
-        ],
-      }
-      // const raasClient = new RaasClient(
-      //   undefined,
-      //   process.env.PFX_CLIENT_ID,
-      //   process.env.PFX_CLIENT_SECRET
-      // )
-
-      // const articles = await raasClient.relevanceFromSearch({
-      //   relevantContext: {
-      //     searchQuery,
-      //   },
-      //   overrideResponseTypes: [RelevanceResponseType.Articles],
-      // })
-
       // return {
       //   content: [
       //     {
       //       type: 'text',
-      //       text: JSON.stringify(articles, null, 2),
+      //       text: `Searching articles for "${searchQuery}"`,
       //     },
       //   ],
       // }
+      const articles = await fetch('/api/raas/articles', {
+        method: 'POST',
+        body: JSON.stringify({ searchQuery }),
+      })
+
+      const data = await articles.json()
+
+      return {
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(data, null, 2),
+          },
+        ],
+      }
     },
   },
 }

@@ -1,8 +1,9 @@
-import { AgentConfig } from "@/app/types";
+import { AgentConfig } from '@/app/types'
 
 const serviceDesk: AgentConfig = {
-  name: "doctor",
-  publicDescription: "The doctor agent is a specialized assistant focused on helping you manage your list of doctors in the HealthLine Portal. This agent works like a diligent hospital administrator, taking the time to confirm all details to ensure complete accuracy. Whether you need to add a new doctor to your list or remove an existing one, the doctor Agent will guide you step by step through the process, confirming every detail along the way. With a calm and professional demeanor, the doctor agent ensures your requests are handled with care and precision.",
+  name: 'doctor',
+  publicDescription:
+    'The doctor agent is a specialized assistant that helps manage your HealthLine Portal doctor list. It acts like a hospital administrator, ensuring accuracy by confirming details. It guides you through adding or removing doctors, step by step, with a calm and professional demeanor.',
   instructions: `
     # Personality and Tone
     ## Identity
@@ -209,131 +210,138 @@ const serviceDesk: AgentConfig = {
     `,
   tools: [
     {
-        type: "function",
-        name: "addDoctor",
-        description: "Adds a doctor to the user's list.",
-        parameters: {
-          type: "object",
-          properties: {
-            doctorName: {
-              type: "string",
-              description: "The name of the doctor to add.",
-            },
-            specialty: {
-              type: "string",
-              description: "The specialty of the doctor.",
-            },
-            lastVisitDate: {
-              type: "string",
-              description: "The last visit date of the doctor.",
-            }
+      type: 'function',
+      name: 'addDoctor',
+      description: "Adds a doctor to the user's list.",
+      parameters: {
+        type: 'object',
+        properties: {
+          doctorName: {
+            type: 'string',
+            description: 'The name of the doctor to add.',
           },
-          required: ["doctorName", "specialty", "lastVisitDate"],
-          additionalProperties: false,
+          specialty: {
+            type: 'string',
+            description: 'The specialty of the doctor.',
+          },
+          lastVisitDate: {
+            type: 'string',
+            description: 'The last visit date of the doctor.',
+          },
         },
+        required: ['doctorName', 'specialty', 'lastVisitDate'],
+        additionalProperties: false,
       },
-      {
-        type: "function",
-        name: "deleteDoctor",
-        description: "Deletes a doctor from the user's list.",
-        parameters: {
-          type: "object",
-          properties: {
-            doctorName: {
-              type: "string",
-              description: "The name of the doctor to delete.",
-            }
+    },
+    {
+      type: 'function',
+      name: 'deleteDoctor',
+      description: "Deletes a doctor from the user's list.",
+      parameters: {
+        type: 'object',
+        properties: {
+          doctorName: {
+            type: 'string',
+            description: 'The name of the doctor to delete.',
           },
-          required: ["doctorName"],
-          additionalProperties: false,
         },
+        required: ['doctorName'],
+        additionalProperties: false,
       },
-      {
-        type: "function",
-        name: "highlightDoctor",
-        description: "Highlights a doctor on the user's list.",
-        parameters: {
-          type: "object",
-          properties: {
-            doctorName: {
-              type: "string",
-              description: "The name of the doctor to highlight.",
-            }
+    },
+    {
+      type: 'function',
+      name: 'highlightDoctor',
+      description: "Highlights a doctor on the user's list.",
+      parameters: {
+        type: 'object',
+        properties: {
+          doctorName: {
+            type: 'string',
+            description: 'The name of the doctor to highlight.',
           },
-          required: ["doctorName"],
-          additionalProperties: false,
         },
+        required: ['doctorName'],
+        additionalProperties: false,
       },
-      {
-        type: "function",
-        name: "unhighlightDoctor",
-        description: "Unhighlights a doctor on the user's list.",
-        parameters: {
-          type: "object",
-          properties: {
-            doctorName: {
-              type: "string",
-              description: "The name of the doctor to unhighlight.",
-            }
+    },
+    {
+      type: 'function',
+      name: 'unhighlightDoctor',
+      description: "Unhighlights a doctor on the user's list.",
+      parameters: {
+        type: 'object',
+        properties: {
+          doctorName: {
+            type: 'string',
+            description: 'The name of the doctor to unhighlight.',
           },
-          required: ["doctorName"],
-          additionalProperties: false,
         },
-      }
+        required: ['doctorName'],
+        additionalProperties: false,
+      },
+    },
   ],
   toolLogic: {
     addDoctor: async ({ doctorName, specialty, lastVisitDate }) => {
-      console.log(`[toolLogic] adding doctor ${doctorName} with specialty ${specialty} and last visit date ${lastVisitDate}`);
+      console.log(
+        `[toolLogic] adding doctor ${doctorName} with specialty ${specialty} and last visit date ${lastVisitDate}`
+      )
 
       // Post request to localhost:3000 /api/addDoctor
       // with body { doctorName, specialty, lastVisitDate }
       const messages = [
         {
-          role: "system",
-          content: "Your role is to convert the date provided by the user into the format MM/DD/YYYY. For example, if the user providers January 1st 2022, format it as 01/01/2022. Return only the formatted date."
+          role: 'system',
+          content:
+            'Your role is to convert the date provided by the user into the format MM/DD/YYYY. For example, if the user providers January 1st 2022, format it as 01/01/2022. Return only the formatted date.',
         },
         {
-          role: "user",
-          content: lastVisitDate
-        }
+          role: 'user',
+          content: lastVisitDate,
+        },
       ]
 
-      const model = "gpt-4o";
-      console.log(`checking order eligibility with model=${model}`);
+      const model = 'gpt-4o'
+      console.log(`checking order eligibility with model=${model}`)
 
-      const response = await fetch("/api/chat/completions", {
-        method: "POST",
+      const response = await fetch('/api/chat/completions', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ model, messages }),
-      });
+      })
 
-      const completion = await response.json();
-      console.log(completion.choices[0].message.content);
-      const formattedDate = completion.choices[0].message.content;
+      const completion = await response.json()
+      console.log(completion.choices[0].message.content)
+      const formattedDate = completion.choices[0].message.content
 
       const apiResponse = await fetch('http://localhost:4000/api/doctors', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json',
         },
-        body: JSON.stringify({ name: doctorName, specialty, lastVisited: formattedDate }),
-      });
+        body: JSON.stringify({
+          name: doctorName,
+          specialty,
+          lastVisited: formattedDate,
+        }),
+      })
 
-      const data = await apiResponse.json();
+      const data = await apiResponse.json()
 
-      return data;
+      return data
     },
     deleteDoctor: async ({ doctorName }) => {
-      console.log(`[toolLogic] deleting doctor ${doctorName}`);
+      console.log(`[toolLogic] deleting doctor ${doctorName}`)
 
       // Post request to localhost:3000 /api/deleteDoctor
       // with body { doctorName }
       const messages = [
         {
-          role: "system",
+          role: 'system',
           content: `Your role is to identify the doctorId for the doctor provided by the user. Here is the list of doctors with their corresponding ids:
             1: Dr. Sarah Smith
             2: Dr. John Davis
@@ -345,55 +353,58 @@ const serviceDesk: AgentConfig = {
             8: Dr. Robert Taylor
 
             The user will provide you with the doctor's name. You must identify the doctorId for the doctor provided by the user and return only the doctorId and another else.
-          `
+          `,
         },
         {
-          role: "user",
-          content: doctorName
-        }
+          role: 'user',
+          content: doctorName,
+        },
       ]
 
-      const model = "gpt-4o";
-      console.log(`checking order eligibility with model=${model}`);
+      const model = 'gpt-4o'
+      console.log(`checking order eligibility with model=${model}`)
 
-      const response = await fetch("/api/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ model, messages }),
-      });
-
-      if (!response.ok) {
-        console.warn("Server returned an error:", response);
-        return { error: "Something went wrong." };
-      }
-
-      const completion = await response.json();
-      console.log(completion.choices[0].message.content);
-      const doctorId =  completion.choices[0].message.content;
-
-      const apiResponse = await fetch('http://localhost:4000/api/doctors/delete', {
+      const response = await fetch('/api/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify({ id: doctorId }),
-      });
+        body: JSON.stringify({ model, messages }),
+      })
 
-      const data = await apiResponse.json();
+      if (!response.ok) {
+        console.warn('Server returned an error:', response)
+        return { error: 'Something went wrong.' }
+      }
 
-      return data;
+      const completion = await response.json()
+      console.log(completion.choices[0].message.content)
+      const doctorId = completion.choices[0].message.content
+
+      const apiResponse = await fetch(
+        'http://localhost:4000/api/doctors/delete',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ id: doctorId }),
+        }
+      )
+
+      const data = await apiResponse.json()
+
+      return data
     },
     highlightDoctor: async ({ doctorName }) => {
-      console.log(`[toolLogic] highlighting doctor ${doctorName}`);
+      console.log(`[toolLogic] highlighting doctor ${doctorName}`)
 
       // Post request to localhost:3000 /api/highlightDoctor
       // with body { doctorName }
       const messages = [
         {
-          role: "system",
+          role: 'system',
           content: `Your role is to identify the doctorId for the doctor provided by the user. Here is the list of doctors with their corresponding ids:
             1: Dr. Sarah Smith
             2: Dr. John Davis
@@ -405,56 +416,59 @@ const serviceDesk: AgentConfig = {
             8: Dr. Robert Taylor
 
             The user will provide you with the doctor's name. You must identify the doctorId for the doctor provided by the user and return only the doctorId and another else.
-          `
+          `,
         },
         {
-          role: "user",
-          content: doctorName
-        }
+          role: 'user',
+          content: doctorName,
+        },
       ]
 
-      const model = "gpt-4o";
-      console.log(`checking order eligibility with model=${model}`);
+      const model = 'gpt-4o'
+      console.log(`checking order eligibility with model=${model}`)
 
-      const response = await fetch("/api/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ model, messages }),
-      });
-
-      if (!response.ok) {
-        console.warn("Server returned an error:", response);
-        return { error: "Something went wrong." };
-      }
-
-      const completion = await response.json();
-      console.log(completion.choices[0].message.content);
-      const doctorId =  completion.choices[0].message.content;
-
-      const apiResponse = await fetch('http://localhost:4000/api/doctors/highlight', {
+      const response = await fetch('/api/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify({ id: doctorId }),
-      });
+        body: JSON.stringify({ model, messages }),
+      })
 
-      const data = await apiResponse.json();
+      if (!response.ok) {
+        console.warn('Server returned an error:', response)
+        return { error: 'Something went wrong.' }
+      }
 
-      return data;
+      const completion = await response.json()
+      console.log(completion.choices[0].message.content)
+      const doctorId = completion.choices[0].message.content
+
+      const apiResponse = await fetch(
+        'http://localhost:4000/api/doctors/highlight',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ id: doctorId }),
+        }
+      )
+
+      const data = await apiResponse.json()
+
+      return data
     },
     unhighlightDoctor: async ({ doctorName }) => {
-        console.log(`[toolLogic] unhighlighting doctor ${doctorName}`);
-    
-        // Post request to localhost:3000 /api/unhighlightDoctor
-        // with body { doctorName }
-        const messages = [
+      console.log(`[toolLogic] unhighlighting doctor ${doctorName}`)
+
+      // Post request to localhost:3000 /api/unhighlightDoctor
+      // with body { doctorName }
+      const messages = [
         {
-            role: "system",
-            content: `Your role is to identify the doctorId for the doctor provided by the user. Here is the list of doctors with their corresponding ids:
+          role: 'system',
+          content: `Your role is to identify the doctorId for the doctor provided by the user. Here is the list of doctors with their corresponding ids:
             1: Dr. Sarah Smith
             2: Dr. John Davis
             3: Dr. Emily Chen
@@ -465,49 +479,51 @@ const serviceDesk: AgentConfig = {
             8: Dr. Robert Taylor
 
             The user will provide you with the doctor's name. You must identify the doctorId for the doctor provided by the user and return only the doctorId and another else.
-            `
+            `,
         },
         {
-            role: "user",
-            content: doctorName
-        }
-        ]
+          role: 'user',
+          content: doctorName,
+        },
+      ]
 
-        const model = "gpt-4o";
-        console.log(`checking order eligibility with model=${model}`);
+      const model = 'gpt-4o'
+      console.log(`checking order eligibility with model=${model}`)
 
-        const response = await fetch("/api/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ model, messages }),
-        });
+      const response = await fetch('/api/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ model, messages }),
+      })
 
-        if (!response.ok) {
-            console.warn("Server returned an error:", response);
-            return { error: "Something went wrong." };
-        }
+      if (!response.ok) {
+        console.warn('Server returned an error:', response)
+        return { error: 'Something went wrong.' }
+      }
 
-        const completion = await response.json();
-        console.log(completion.choices[0].message.content);
-        const doctorId =  completion.choices[0].message.content;
-    
-        const apiResponse = await fetch('http://localhost:4000/api/doctors/unhighlight', {
+      const completion = await response.json()
+      console.log(completion.choices[0].message.content)
+      const doctorId = completion.choices[0].message.content
+
+      const apiResponse = await fetch(
+        'http://localhost:4000/api/doctors/unhighlight',
+        {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            Accept: 'application/json',
           },
           body: JSON.stringify({ id: doctorId }),
-        });
-    
-        const data = await apiResponse.json();
-    
-        return data;
+        }
+      )
+
+      const data = await apiResponse.json()
+
+      return data
     },
   },
-};
+}
 
-export default serviceDesk;
-
+export default serviceDesk
