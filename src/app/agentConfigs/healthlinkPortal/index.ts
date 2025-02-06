@@ -1,10 +1,14 @@
-import doctor from './doctor';
-import serviceDesk from './serviceDesk';
-import { injectTransferTools } from '../utils';
+import doctor from './doctor'
+import serviceDesk from './serviceDesk'
+import article from './article'
+import { injectTransferTools } from '../utils'
 
+// Connect all agents to each other
 doctor.downstreamAgents = [serviceDesk]
-serviceDesk.downstreamAgents = [doctor]
+serviceDesk.downstreamAgents = [doctor, article]
+// articles.downstreamAgents = [doctor, serviceDesk]
 
-const agents = injectTransferTools([serviceDesk, doctor]);
+// Add transfer tools to all agents
+const agents = injectTransferTools([serviceDesk, doctor, article])
 
-export default agents;
+export default agents

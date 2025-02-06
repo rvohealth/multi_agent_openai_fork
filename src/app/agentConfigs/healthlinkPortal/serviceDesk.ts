@@ -1,8 +1,9 @@
-import { AgentConfig } from "@/app/types";
+import { AgentConfig } from '@/app/types'
 
 const serviceDesk: AgentConfig = {
-  name: "serviceDesk",
-  publicDescription: "The service desk is the first point of contact when using the HealthLine Portal. Acting like a virtual hospital call center assistant, this agent is designed to understand your requests and guide you through the portal with ease. Whether you need to navigate between tabs, view specific details about your health records, or request help with managing your doctor list, the Primary Agent ensures your needs are addressed quickly and efficiently. For tasks requiring additional support, the Primary Agent will seamlessly connect you to the right specialist to handle your request.",
+  name: 'serviceDesk',
+  publicDescription:
+    "The service desk is the HealthLine Portal's first point of contact, acting as a virtual hospital call center assistant. It understands and addresses your requests efficiently, guiding you through the portal, including navigation, health records, and doctor list management. It connects you to specialists for additional support.",
   instructions: `
     # Personality and Tone
     ## Identity
@@ -96,8 +97,8 @@ const serviceDesk: AgentConfig = {
             "description": "Identify the user's intent based on their request.",
             "instructions": [
                 "Listen carefully to the user’s request",
-                "The user can indicate that they want to view something specific, or that they want to add or delete a doctor. They have the ability to view the list of doctors they have visited, the number of visits to doctors by family member over time, the number of visits to doctors by family member by month, and the relationships between doctors and family members.",
-                "Classify the intent of the request as one of two categories (e.g., add/delete doctors, view specific details).",
+                "The user can indicate that they want to view something specific, or that they want to add or delete a doctor. They have the ability to view the list of doctors they have visited, the number of visits to doctors by family member over time, the number of visits to doctors by family member by month, and the relationships between doctors and family members. They can also search for articles.",
+                "Classify the intent of the request as one of three categories (e.g., add/delete doctors, view specific details, or search for articles).",
             ],
             "examples": [
                 "What can I help you with?"
@@ -271,77 +272,82 @@ const serviceDesk: AgentConfig = {
   `,
   tools: [
     {
-        type: "function",
-        name: "navigateToTab",
-        description: "Navigates the user to a specific tab within the HealthLine Portal. Tabs include 'doctors', 'visits', 'monthly', and 'relationships'.",
-        parameters: {
-          type: "object",
-          properties: {
-            tab: {
-              type: "string",
-              description: "The name of the tab to navigate to. Must be one of the following: 'doctors', 'visits', 'monthly', or 'relationships'.",
-            }
+      type: 'function',
+      name: 'navigateToTab',
+      description:
+        "Navigates the user to a specific tab within the HealthLine Portal. Tabs include 'doctors', 'visits', 'monthly', and 'relationships'.",
+      parameters: {
+        type: 'object',
+        properties: {
+          tab: {
+            type: 'string',
+            description:
+              "The name of the tab to navigate to. Must be one of the following: 'doctors', 'visits', 'monthly', or 'relationships'.",
           },
-          required: ["tab"],
-          additionalProperties: false,
         },
+        required: ['tab'],
+        additionalProperties: false,
       },
-      {
-        type: "function",
-        name: "viewVisitsByMonth",
-        description: "Displays visit details for a specific month from the 'Monthly Breakdowns' tab.",
-        parameters: {
-          type: "object",
-          properties: {
-            month: {
-              type: "string",
-              description: "The month to view the doctors visits for (e.g., 'February').",
-            },
-            year: {
-              type: "string",
-              description: "The year to view the doctors visits for in the format 'YYYY' (e.g., '2023').",
-            }
+    },
+    {
+      type: 'function',
+      name: 'viewVisitsByMonth',
+      description:
+        "Displays visit details for a specific month from the 'Monthly Breakdowns' tab.",
+      parameters: {
+        type: 'object',
+        properties: {
+          month: {
+            type: 'string',
+            description:
+              "The month to view the doctors visits for (e.g., 'February').",
           },
-          required: ["month", "year"],
-          additionalProperties: false,
+          year: {
+            type: 'string',
+            description:
+              "The year to view the doctors visits for in the format 'YYYY' (e.g., '2023').",
+          },
         },
+        required: ['month', 'year'],
+        additionalProperties: false,
       },
-      {
-        type: "function",
-        name: "viewRelationship",
-        description: "Displays a relationship between a doctor and a family member on the 'Relationships' tab.",
-        parameters: {
-          type: "object",
-          properties: {
-            doctorName: {
-              type: "string",
-              description: "The name of the doctor in the relationship.",
-            },
-            familyMember: {
-              type: "string",
-              description: "The name of the family member in the relationship.",
-            }
+    },
+    {
+      type: 'function',
+      name: 'viewRelationship',
+      description:
+        "Displays a relationship between a doctor and a family member on the 'Relationships' tab.",
+      parameters: {
+        type: 'object',
+        properties: {
+          doctorName: {
+            type: 'string',
+            description: 'The name of the doctor in the relationship.',
           },
-          required: ["doctorName", "familyMember"],
-          additionalProperties: false,
+          familyMember: {
+            type: 'string',
+            description: 'The name of the family member in the relationship.',
+          },
         },
+        required: ['doctorName', 'familyMember'],
+        additionalProperties: false,
       },
-      {
-        type: "function",
-        name: "closeRelationship",
-        description: "Closes the relationship dialog on the 'Relationships' tab.", 
-        parameters: {
-          type: "object",
-          properties: {
-          },
-          required: [],
-          additionalProperties: false,
-        },
-      }
+    },
+    {
+      type: 'function',
+      name: 'closeRelationship',
+      description: "Closes the relationship dialog on the 'Relationships' tab.",
+      parameters: {
+        type: 'object',
+        properties: {},
+        required: [],
+        additionalProperties: false,
+      },
+    },
   ],
   toolLogic: {
     navigateToTab: async ({ tab }) => {
-      console.log(`[toolLogic] navigating to tab ${tab}`);
+      console.log(`[toolLogic] navigating to tab ${tab}`)
 
       // Post request to localhost:3000 /api/navigate
       // with body { tab: tab }
@@ -350,69 +356,74 @@ const serviceDesk: AgentConfig = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json',
         },
         body: JSON.stringify({ tab }),
-      });
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
-      return data;
+      return data
     },
     viewVisitsByMonth: async ({ month, year }) => {
-      console.log(`[toolLogic] viewing visits by month ${month}`);
+      console.log(`[toolLogic] viewing visits by month ${month}`)
 
       // Post request to localhost:3000 /api/visits/month
       // with body { month: month }
       const messages = [
         {
-          role: "system",
+          role: 'system',
           content: `Your role is to format the month and year provided by the user into the format 'YYYY-MM' (e.g., '2023-02' for February 2023) and return the formatted month and year. Do not return anything else.
-          `
+          `,
         },
         {
-          role: "user",
-          content: `${month} ${year}`
-        }
+          role: 'user',
+          content: `${month} ${year}`,
+        },
       ]
 
-      const model = "gpt-4o";
-      console.log(`checking order eligibility with model=${model}`);
+      const model = 'gpt-4o'
+      console.log(`checking order eligibility with model=${model}`)
 
-      const response = await fetch("/api/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ model, messages }),
-      });
-
-      const completion = await response.json();
-      console.log(completion.choices[0].message.content);
-      const yearMonth = completion.choices[0].message.content;
-
-      const apiResponse = await fetch('http://localhost:4000/api/visits/month', {
+      const response = await fetch('/api/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify({ month:yearMonth }),
-      });
+        body: JSON.stringify({ model, messages }),
+      })
 
-      const data = await apiResponse.json();
+      const completion = await response.json()
+      console.log(completion.choices[0].message.content)
+      const yearMonth = completion.choices[0].message.content
 
-      return data;
+      const apiResponse = await fetch(
+        'http://localhost:4000/api/visits/month',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ month: yearMonth }),
+        }
+      )
+
+      const data = await apiResponse.json()
+
+      return data
     },
     viewRelationship: async ({ doctorName, familyMember }) => {
-      console.log(`[toolLogic] viewing relationship for ${doctorName} and ${familyMember}`);
+      console.log(
+        `[toolLogic] viewing relationship for ${doctorName} and ${familyMember}`
+      )
 
       // Post request to localhost:3000 /api/viewRelationship
       // with body { doctorId, familyMember }
 
       const messages = [
         {
-          role: "system",
+          role: 'system',
           content: `Your role is to identify the doctorId for the doctor provided by the user. Here is the list of doctors with their corresponding ids:
             1: Dr. Sarah Smith
             2: Dr. John Davis
@@ -424,68 +435,73 @@ const serviceDesk: AgentConfig = {
             8: Dr. Robert Taylor
 
             The user will provide you with the doctor's name. You must identify the doctorId for the doctor provided by the user and return only the doctorId and another else.
-          `
+          `,
         },
         {
-          role: "user",
-          content: doctorName
-        }
+          role: 'user',
+          content: doctorName,
+        },
       ]
 
-      const model = "gpt-4o";
-      console.log(`checking order eligibility with model=${model}`);
+      const model = 'gpt-4o'
+      console.log(`checking order eligibility with model=${model}`)
 
-      const response = await fetch("/api/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ model, messages }),
-      });
-
-      if (!response.ok) {
-        console.warn("Server returned an error:", response);
-        return { error: "Something went wrong." };
-      }
-
-      const completion = await response.json();
-      console.log(completion.choices[0].message.content);
-      const doctorId =  completion.choices[0].message.content;
-
-      const apiResponse = await fetch('http://localhost:4000/api/viewRelationship', {
+      const response = await fetch('/api/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify({ doctorId, familyMember }),
-      });
+        body: JSON.stringify({ model, messages }),
+      })
 
-      const data = await apiResponse.json();
+      if (!response.ok) {
+        console.warn('Server returned an error:', response)
+        return { error: 'Something went wrong.' }
+      }
 
-      return data;
-    },  
+      const completion = await response.json()
+      console.log(completion.choices[0].message.content)
+      const doctorId = completion.choices[0].message.content
+
+      const apiResponse = await fetch(
+        'http://localhost:4000/api/viewRelationship',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({ doctorId, familyMember }),
+        }
+      )
+
+      const data = await apiResponse.json()
+
+      return data
+    },
     closeRelationship: async () => {
-      console.log(`[toolLogic] closing relationship`);
+      console.log(`[toolLogic] closing relationship`)
 
       // Post request to localhost:3000 /api/closeRelationship
       // with body {}
 
-      const response = await fetch('http://localhost:4000/api/closeRelationship', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({}),
-      });
+      const response = await fetch(
+        'http://localhost:4000/api/closeRelationship',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify({}),
+        }
+      )
 
-      const data = await response.json();
+      const data = await response.json()
 
-      return data;
-    }
+      return data
+    },
   },
-};
+}
 
-export default serviceDesk;
-
+export default serviceDesk
